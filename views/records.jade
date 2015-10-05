@@ -19,6 +19,8 @@ html
 					th(id="confidence") Result2
 					th(id="confidence") Confidence2
 				each recObj in records
+					if (recObj.image!=null) 
+						the image is #{recObj['image']}
 					tr
 						td #{recObj['camera_id']}
 						td #{recObj['site_id']}

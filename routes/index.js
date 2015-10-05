@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var assert = require('assert');
+var fs= require('fs');
+var image={};
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -10,9 +12,13 @@ router.get('/', function(req, res, next) {
 router.get('/records', function(req, res, next) {
   var db = req.db;
   var collection= db.get('usercollection');
+  image = fs.readFileSync("C://Users//cipher1729//projects//licenserecog//testImg.png",'base64');
+  //console.log(image);
   collection.find({},{}, function(e,docs){
-	console.log(docs);
+	//console.log(docs);
 	 //res.render('records', { title: 'All records', records: JSON.stringify(docs), something:'hello' });
+	 docs[0].image= image;
+	 console.log(docs[0].image);
 	res.render('records', { title: 'All records', records: docs, something:'hello' });
   });
 });
