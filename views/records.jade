@@ -8,42 +8,22 @@ html
 		//script(type='text/javascript').
 		//	var a =5;
 		//the result is #{a}
-		each recObj in records
-			The objId is #{recObj['uuid']}
-			br
-			The cameraId is #{recObj['camera_id']}
-			br
-			The siteId is #{recObj['site_id']}
-			br
-			The img_height is #{recObj[' img_height']}
-			br
-			The img_width is #{recObj['img_width']}
-			br
-			The epoch_time is #{recObj['epoch_time']}
-			br
-			The processing_time_ms is #{recObj['processing_time_ms']}
-			br
-			each result in recObj.results
-				The plate is #{result['plate']}
-				br
-				The confidence is #{result['confidence']}
-				br
-				The matches_template is #{result['matches_template']}
-				br
-				The region is #{result['region']}
-				br
-				The region_confidence is #{result['region_confidence']}
-				br
-				each coordinate in result.coordinates
-					The x is #{coordinate['x']}
-					br
-					The y is #{coordinate['y']}
-					br
-				each candidate in result.candidates
-					The plate is #{candidate['plate']}
-					br
-					The confidence is #{candidate['confidence']}
-					br
-					The matches_template is #{candidate['matches_template']}
-					br
-			br		
+		table(border="1" style="100%")
+			thead
+			tbody
+				tr
+					th(id="camera_id") Camera_id
+					th(id="location") Location
+					th(id="result") Result1
+					th(id="confidence") Confidence1
+					th(id="confidence") Result2
+					th(id="confidence") Confidence2
+				each recObj in records
+					tr
+						td #{recObj['camera_id']}
+						td #{recObj['site_id']}
+						if(recObj.results!=null)
+							each result in recObj.results
+								td #{result['plate']}
+								td #{result['confidence']}
+							
