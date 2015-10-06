@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.get('/records', function(req, res, next) {
   var db = req.db;
   var collection= db.get('usercollection');
-  image = fs.readFileSync("C://Users//cipher1729//projects//licenserecog//testImg.png",'base64');
+  image = fs.readFileSync("C://Users//cipher1729//projects//licenserecog/200.jpg",'base64');
   //console.log(image);
   collection.find({},{}, function(e,docs){
 	//console.log(docs);
