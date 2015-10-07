@@ -7,23 +7,28 @@ html
 			var conv= atob(encodedData);
 			console.log(conv);
 			var x= 5;
-		img(src="data:image/jpg;base64,"+"#{records[0].image}" height="20%" width="20%")
 		table(border="1" style="100%")
 			thead
 			tbody
 				tr
 					th(id="camera_id") Camera_id
 					th(id="location") Location
-					th(id="result") Result1
+					th(id="result") image
+					th(id="confidence") Result1
 					th(id="confidence") Confidence1
 					th(id="confidence") Result2
-					th(id="confidence") Confidence2
+					th(id="licenseimage") Confidence2
 				each recObj in records
 					//if (recObj.image!=null) 
 						//the image is #{recObj['image']}
 					tr
 						td #{recObj['camera_id']}
 						td #{recObj['site_id']}
+						if(recObj.license_image!=null)
+							td 
+								img(src="data:image/jpg;base64,"+"#{recObj.license_image}" height="70%" width="70%")
+						else
+							td blank
 						if(recObj.results!=null)
 							each result in recObj.results
 								td #{result['plate']}

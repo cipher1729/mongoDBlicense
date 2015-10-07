@@ -18,7 +18,7 @@ router.get('/records', function(req, res, next) {
 	//console.log(docs);
 	 //res.render('records', { title: 'All records', records: JSON.stringify(docs), something:'hello' });
 	 docs[0].image= image;
-	 console.log(docs[0].image);
+	 //console.log(docs[0].image);
 	res.render('records', { title: 'All records', records: docs, something:'hello' });
   });
 });
@@ -36,6 +36,8 @@ router.post('/addRecord',function(req, res, next) {
   var epoch_time = req.body.epoch_time;
   var processing_time_ms= req.body.processing_time_ms;
   var results = req.body.results;
+  console.log(results);
+  var license_image = req.body.license_image;
    collection.insert({
         "uuid" : uuid,
 		"camera_id":camera_id,
@@ -44,7 +46,8 @@ router.post('/addRecord',function(req, res, next) {
 		"image_height" : image_height,
 		"epoch_time" : epoch_time,
 		"processing_time_ms" : processing_time_ms,
-		"results" : results
+		"results" : results,
+		"license_image":license_image
     }, function (err, doc) {
         if (err) {
             // If it failed, return error
