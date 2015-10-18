@@ -1,0 +1,78 @@
+
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
+		<script>
+		$(document).ready(function(){
+			$("#btnSubmit").click(function()
+			{
+				
+				var myObj = {"cameraId":$("#cameraId").val(), "licensePlate": $("#licensePlate").val()};
+				//console.log(myObj);
+				$.post("http://localhost:3000/createdetail", myObj, function(data,status){
+					alert("Data: " + data + "\nStatus: " + status);
+				});
+			});
+			
+				
+			$("#updateBtnSubmit").click(function()
+			{
+				
+				var myObj={"cameraId":$("#updateCameraId").val(), "licensePlate":$("#updateLicensePlate").val()};
+				console.log(myObj);
+				$.post("http://localhost:3000/updatedetail", myObj, function(data,status){
+					alert("Data: " + data + "\nStatus: " + status);
+				});
+			});
+			
+			$("#findBtnSubmit").click(function()
+			{
+				var myObj={"phone":$("#findPhone").val()};
+				$.get("http://localhost:3000/findlot",myObj,function(data,status){
+					alert("Data: " + data + "\nStatus: " + status);
+				});
+			});
+			$("#loginBtnSubmit").click(function()
+			{
+				var myObj={"phone": $("#phoneLogin").val(), "password":$("#passwordLogin").val()};
+				$.get("http://localhost:3000/login",myObj,function(data,status){
+					alert("Data: " + data + "\nStatus: " + status);
+				});
+			});
+			
+			$("#detailsBtnSubmit").click(function()
+			{
+				var myObj={"phone": $("#phoneDetails").val()};
+				$.get("http://localhost:3000/userdetails",myObj,function(data,status){
+					alert("Data: " + data + "\nStatus: " + status);
+				});
+			});
+			
+			
+				
+		});
+		</script>
+	</head>
+	<body>
+			Entry Camera </br>
+			Camera_Id:  <input type="text" id="cameraId"></br>
+			LicensePlate: <input type="text" id="licensePlate">
+			<button id='btnSubmit'>Press here</button>
+			<p>
+			Update </br>
+			Camera_Id:  <input type="text" id="updateCameraId"></br>
+			LicensePlate: <input type="text" id="updateLicensePlate">
+			<button id='updateBtnSubmit'>Press here</button>
+			<p>
+			Phone: <input type="text" id="findPhone">
+			<button id='findBtnSubmit'>Find All!</button>
+			<p>
+			Phone:  <input type="text" id="phoneLogin"></br>
+			Password: <input type="text" id="passwordLogin">
+			<button id='loginBtnSubmit'>Login!</button>
+			<p>
+			Phone:  <input type="text" id="phoneDetails"></br>
+			<button id='detailsBtnSubmit'>User Details</button>
+			
+	</body>
+</html>
