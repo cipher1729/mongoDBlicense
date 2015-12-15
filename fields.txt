@@ -1,0 +1,35 @@
+//adding color to plate detection
+//figure out how to use date
+//integrate timed event library (whenever someone adds a reservartion, start a cron job. On Crob completecion. send a socket event for GPS
+
+
+
+user:
+name
+phone
+password
+email
+licensePlate
+timeIn
+timeOut
+reservartionIn
+reservationOut
+carColor
+carType
+carGps
+nearSite
+
+
+
+details:
+
+"cameraId":cameraId,
+		"userFound":false,
+        "licensePlate" : licensePlate,
+		"uuid":uuid,
+		"siteId":siteId,
+		"results":results,
+		"license_image":license_image,
+		"detectedCarColor":detectedCarColor,
+
+		

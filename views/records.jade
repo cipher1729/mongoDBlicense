@@ -6,13 +6,12 @@ html
 			var encodedData = "#{records[0].image}";
 			var conv= atob(encodedData);
 			console.log(conv);
-			var x= 5;
 		table(border="1" style="100%")
 			thead
 			tbody
 				tr
 					th(id="camera_id") Camera_id
-					th(id="location") Location
+					th(id="site_id") Site_Id
 					th(id="result") image
 					th(id="confidence") Result1
 					th(id="confidence") Confidence1
@@ -22,11 +21,11 @@ html
 					//if (recObj.image!=null) 
 						//the image is #{recObj['image']}
 					tr
-						td #{recObj['camera_id']}
-						td #{recObj['site_id']}
+						td #{recObj['cameraId']}
+						td #{recObj['siteId']}
 						if(recObj.license_image!=null)
 							td 
-								img(src="data:image/jpg;base64,"+"#{recObj.license_image}" height="70%" width="70%")
+								img(src="data:image/jpg;base64,"+"#{recObj.license_image}" height="80%" width="80%")
 						else
 							td blank
 						if(recObj.results!=null)

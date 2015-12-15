@@ -11,8 +11,21 @@ var monk = require('monk');
 var db = monk('localhost:27017/licensedb');
 
 
+//initializations of framework.
 var app = express();
+var server = require('http').Server(app);
+io = require('socket.io')(server);
+server.listen(3000);
+mySocket={};
 
+//TODO
+io.on('connection', function(socket){
+	console.log('a user connected');
+	mySocket=socket;
+	//console.log("socket is" + JSON.stringify(mySocket));
+});
+	
+	
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -33,6 +46,8 @@ app.use(function(req,res,next){
 	//console.log(db);
 	next();
 });
+
+
 
 app.use('/', routes);
 
@@ -66,6 +81,7 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
 
 
 module.exports = app;
