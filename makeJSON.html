@@ -4,10 +4,10 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" ></script>
 		<script>
 		$(document).ready(function(){
-			$("#btnSubmit").click(function()
+			$("#entryBtnSubmit").click(function()
 			{
-				
-				var myObj = {"cameraId":$("#cameraId").val(), "licensePlate": $("#licensePlate").val()};
+				var results=[{"plate":$("#licensePlate").val()}];
+				var myObj = {"cameraId":$("#cameraId").val(), "licensePlate": $("#licensePlate").val(), "uuid":{},"siteId":{}, "results":JSON.stringify(results),"license_image":{},"detectedCarColor":{}};
 				//console.log(myObj);
 				$.post("http://localhost:3000/createdetail", myObj, function(data,status){
 					alert("Data: " + data + "\nStatus: " + status);
@@ -18,8 +18,12 @@
 			$("#updateBtnSubmit").click(function()
 			{
 				
-				var myObj={"cameraId":$("#updateCameraId").val(), "licensePlate":$("#updateLicensePlate").val()};
-				console.log(myObj);
+				
+				
+				var results=[{"plate":$("#updateLicensePlate").val()}];
+				var myObj = {"cameraId":$("#updateCameraId").val(), "licensePlate": $("#updateLicensePlate").val(), "uuid":{},"siteId":{}, "results":JSON.stringify(results),"license_image":{},"detectedCarColor":{}};
+				
+				
 				$.post("http://localhost:3000/updatedetail", myObj, function(data,status){
 					alert("Data: " + data + "\nStatus: " + status);
 				});
@@ -57,7 +61,7 @@
 			Entry Camera </br>
 			Camera_Id:  <input type="text" id="cameraId"></br>
 			LicensePlate: <input type="text" id="licensePlate">
-			<button id='btnSubmit'>Press here</button>
+			<button id='entryBtnSubmit'>Press here</button>
 			<p>
 			Update </br>
 			Camera_Id:  <input type="text" id="updateCameraId"></br>

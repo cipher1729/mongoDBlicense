@@ -81,6 +81,8 @@ router.post('/signup', function(req, res, next){
   var timeOut=[];
   var reservationIn=[];
   var reservationOut=[];  
+  var timeSpent=0;
+  
   //find if phone already exists
   collection.find({"phone":phone},{}, function(e,docs){
    if(docs.length!=0)
@@ -95,6 +97,7 @@ router.post('/signup', function(req, res, next){
 		"licensePlate": licensePlate,
 		"timeIn":timeIn,
 		"timeOut":timeOut,
+		"timeSpent":timeSpent,
 		"carColor":carColor,
 		"carType":carType,
 		"carGps":carGps,
@@ -129,7 +132,6 @@ router.post('/createdetail', function(req,res,next){
 	var licensePlate= {};
 	var db = req.db;
     var uuid= req.body.uuid;
-	var cameraId= req.body.cameraId;
 	var siteId= req.body.siteId;
 	var results= req.body.results;
 	var license_image= req.body.license_image;
@@ -137,35 +139,45 @@ router.post('/createdetail', function(req,res,next){
 	
 	var detailCollection= db.get('detailcollection');
 	var userCollection = db.get('usercollection');
+	
+	results = JSON.parse(results);
+	licensePlate = results[0].plate;
+	
+	
 	//populate lotcollection if this is the first car
 	if(firstCar==true)
 	populateLots(db.get('lotcollection'));
 	
 	//find if phone already exists
     //bug?
-	detailCollection.find({"cameraId":cameraId},{}, function(e,docs){
+	detailCollection.find({"licensePlate":licensePlate},{}, function(e,docs){
 	//if not insert this entry into the database
 	
-		//get the 0th entry of the results array and get the plate from that
-		licensePlate = results[0].plate;
-		detailCollection.insert({
-		"cameraId":cameraId,
-		"userFound":false,
-        "licensePlate" : licensePlate,
-		"uuid":uuid,
-		"siteId":siteId,
-		"results":results,
-		"license_image":license_image,
-		"detectedCarColor":detectedCarColor,
-		}, function (err, doc) {
-			if (err) {
-				// If it failed, return error
-				res.send("There was a problem adding the information to the detail database.");
-			}
-			else {
-				res.send("Detail Added to database");
-			}
-		});
+		if(docs.length!=0)
+		{
+			//get the 0th entry of the results array and get the plate from that
+			
+			
+			
+			detailCollection.insert({
+			"cameraId":cameraId,
+			"userFound":false,
+			"licensePlate" : licensePlate,
+			"uuid":uuid,
+			"siteId":siteId,
+			"results":results,
+			"license_image":license_image,
+			"detectedCarColor":detectedCarColor,
+			}, function (err, doc) {
+				if (err) {
+					// If it failed, return error
+					res.send("There was a problem adding the information to the detail database.");
+				}
+				else {
+					res.send("Detail Added to database");
+				}
+			});
+		}
    });
    
 		
@@ -173,9 +185,11 @@ router.post('/createdetail', function(req,res,next){
 		//first read the values from the collection
 		var currentTimeInArray={};
 		userCollection.find({"licensePlate":licensePlate},{},function(e,docs){
-			currentTimeInArray = docs[0].timeIn;
-			currentTimeInArray.push(new Date().getTime() / 1000);
-			userCollection.update({"licensePlate":licensePlate},{$set:{"timeIn":currentReservationInArray}}); 
+			if(docs.length!=0)
+			{	currentTimeInArray = docs[0].timeIn;
+				currentTimeInArray.push(new Date().getTime() / 1000);
+				userCollection.update({"licensePlate":licensePlate},{$set:{"timeIn":currentTimeInArray}}); 
+			}
 		});
 		
 		
@@ -188,7 +202,7 @@ router.post('/updatedetail', function(req,res,next){
 	var cameraId = parseInt(req.body.cameraId);
 	
 	//get the new licensePlate from the new JSON Object
-	var results= req.body.results;
+	var results= JSON.parse(req.body.results);
 	var licensePlate = results[0].plate;
 	
 	//console.log(cameraId);
@@ -226,11 +240,24 @@ router.post('/updatedetail', function(req,res,next){
 											console.log("removed licenseplate " + licensePlate );
 										
 											//log exit time for user
+											//also log time spent in the lot
 											var currentTimeOutArray=[];
 												userCollection.find({"licensePlate": licensePlate},{},function(e,docs){
 													currentTimeOutArray = docs[0].timeOut;
 													currentTimeOutArray.push(new Date().getTime() / 1000);
-													userCollection.update({"licensePlate":licensePlate},{$set:{"timeOut":currentTimeOutArray}}); 
+													
+													userCollection.update({"licensePlate":licensePlate},{$set:{"timeOut":currentTimeOutArray}});
+													
+													
+													//get the latest inTime and outTime and store their difference in timeSpent
+													var noOfTimeInEntries = docs[0].timeIn.length;
+													var noOfTimeOutEntries = docs[0].timeOut.length;
+													
+													var latestTimeIn = docs[0].timeIn[noOfTimeInEntries-1];
+													var latestTimeOut = docs[0].timeOut[noOfTimeOutEntries-1];
+													
+													userCollection.update({"licensePlate":licensePlate},{$set:{"timeSpent":latestTimeOut- latestTimeIn}});
+													
 											});
 
 											
