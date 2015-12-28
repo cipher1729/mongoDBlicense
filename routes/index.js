@@ -150,7 +150,7 @@ router.post('/createdetail', function(req,res,next){
 	
 	//find if phone already exists
     //bug?
-	detailCollection.find({"licensePlate":licensePlate},{}, function(e,docs){
+	userCollection.find({"licensePlate":licensePlate},{}, function(e,docs){
 	//if not insert this entry into the database
 	
 		if(docs.length!=0)
@@ -360,9 +360,10 @@ router.get('/userdetails', function(req,res,next){
 			/*
 			var diff = (docs[0].timeOut - docs[0].timeIn)/1000;
 			var payment = diff * 0.5;
-			var resultObject = {"payment":payment, "timeSpent": diff, "name": docs[0].name, "phone": docs[0].phone, "email":docs[0].email, "licensePlate":docs[0].licensePlate};
-			res.send(JSON.stringify(resultObject));
 			*/
+			var resultObject = {"payment":docs[0].timeSpent*0.5, "timeSpent": docs[0].timeSpent, "name": docs[0].name, "phone": docs[0].phone, "email":docs[0].email, "licensePlate":docs[0].licensePlate};
+			res.send(JSON.stringify(resultObject));
+			
 		}
 	});
 });
