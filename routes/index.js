@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var assert = require('assert');
 var fs= require('fs');
+var haversine = require('haversine');
 
 //for doing periodic gps requests
 var CronJob = require('cron').CronJob;
@@ -36,6 +37,10 @@ router.get('/login', function(req, res, next){
 	
 	console.log(phone);
 	var licensePlate={};
+	
+	
+			   
+			   
 	collection.find({"phone": phone},{}, function(e,docs){
 			// console.log("e is"+ e);
 			 //does not exist in database
@@ -43,6 +48,7 @@ router.get('/login', function(req, res, next){
 			 res.send("Not found!");
 			 else
 			 {
+				
 				//account is found need to find password
 				if(docs[0].password== password)
 					res.send("Validated!");
@@ -51,8 +57,7 @@ router.get('/login', function(req, res, next){
 			 }
 	});
 	
-			  // mySocket.emit('getGpsRequest',{});
-			   //console.log("sending GPS request to clients!");
+			   
 	
 	
 		
@@ -74,7 +79,7 @@ router.post('/signup', function(req, res, next){
   var carType= req.body.carType;
   
   //current GPS location
-  var carGps=0;
+  var carGps={};
   //is he near the site
   var nearSite= false;
   var timeIn=[];
@@ -378,8 +383,9 @@ router.post('/addReservation', function(req,res,next){
 	var inday = req.body.inday;
 	var inhour = req.body.inhour;
 	var inminute = req.body.inminute;
-	var indayofweek= {};
+	var indayofweek= req.body.indayofweek;
 	
+	console.log(indayofweek);
 	if(req.body.indayofweek=="Sunday")
 		indayofweek=0;
 	else if(req.body.indayofweek=="Monday")
@@ -394,14 +400,16 @@ router.post('/addReservation', function(req,res,next){
 		indayofweek=5;
 	else if(req.body.indayofweek=="Saturday")
 		indayofweek=6;
-		
+	
 	
 	
 	var outmonth = req.body.outmonth;
 	var outday = req.body.outday;
 	var outhour = req.body.outhour;
 	var outminute = req.body.outminute;
-	var outdayofweek= {};
+	var outdayofweek= req.body.outdayofweek;
+	
+	
 	
 	if(req.body.outdayofweek=="Sunday")
 		outdayofweek=0;
@@ -417,7 +425,8 @@ router.post('/addReservation', function(req,res,next){
 		outdayofweek=5;
 	else if(req.body.outdayofweek=="Saturday")
 		outdayofweek=6;
-		
+	
+	
 	
 	//form the reservation object and update the correct user's details
 	var currentReservationInArray = {};
@@ -459,10 +468,10 @@ router.post('/addReservation', function(req,res,next){
 			   mySocket.emit('getGpsRequest',{});
 			   console.log("sending GPS request to clients!");
 			  }, function () {
-				/* This function is executed when the job stops */
+				/* This function is exwecuted when the job stops */
 			  },
 			  true, /* Start the job right now */
-			  'America/Phoenix' /* Time zone of this job. */
+			  'America/Chicago' /* Time zone of this job. */
 			);
 			job.start();
 			
@@ -644,7 +653,17 @@ router.post('/setGps', function(req,res,next){
 	var carGps = req.body.carGps;
 	console.log(carGps);
 	userCollection.update({"phone":phone},{$set:{"carGps":carGps}});
-	res.send("Set!");
+	
+	var garageLocation= {"latitude":36.123009, "longitude":-97.069294};
+	
+	var carDist = haversine(garageLocation,carGps,{unit:'km'});
+	
+	console.log(carDist);
+	
+	if(carDist<10)
+		res.send("close");
+	else
+		res.send("far");
 });
 
 
