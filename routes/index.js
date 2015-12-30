@@ -160,6 +160,12 @@ router.post('/createdetail', function(req,res,next){
 	
 		if(docs.length!=0)
 		{
+			//docs will contain all users with that licensePlate, get the phone number and emit something for that particular user
+
+			 var currentUserPhone = docs[0].phone;
+				mySocket.emit('getGpsRequest:'+ currentUserPhone,{});
+			   console.log("sending GPS request to client " +currentUserPhone);
+			 
 			//get the 0th entry of the results array and get the plate from that
 			
 			
@@ -194,6 +200,9 @@ router.post('/createdetail', function(req,res,next){
 			{	currentTimeInArray = docs[0].timeIn;
 				currentTimeInArray.push(new Date().getTime() / 1000);
 				userCollection.update({"licensePlate":licensePlate},{$set:{"timeIn":currentTimeInArray}}); 
+				
+				//user is near/inside the site
+				userCollection.update({"licensePlate":licensePlate},{$set:{"nearSite":true}}); 
 			}
 		});
 		
@@ -269,7 +278,8 @@ router.post('/updatedetail', function(req,res,next){
 											lotCollection.update({"cameraId":actualCameraId},{$set:{"occupied":false}}); 
 											//record his exit time
 										
-										
+											//user is moving out
+											userCollection.update({"licensePlate":licensePlate},{$set:{"nearSite":false}}); 
 										
 										});
 									
@@ -464,9 +474,13 @@ router.post('/addReservation', function(req,res,next){
 			console.log(cronInput);
 			var job = new CronJob(cronInput, function() {
 			  
-			  //when the time occurs, get the gps from the mobile
-			   mySocket.emit('getGpsRequest',{});
-			   console.log("sending GPS request to clients!");
+			  //when the time occurs, get the gps from the mobile, but only if he is not nearSite
+				  if(docs[0].nearSite==false)
+				  {
+					   mySocket.emit('getGpsRequest:'+phone,{});
+					   console.log("sending GPS request to client"+phone);				  
+				  }
+				  
 			  }, function () {
 				/* This function is exwecuted when the job stops */
 			  },
